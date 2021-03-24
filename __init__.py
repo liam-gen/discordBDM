@@ -29,7 +29,7 @@ def bot(prefix, description, token, status, color):
         await ctx.send(f"Pong , je t'ai répondu en {round(latence)}ms !")
 
     @client.command()
-    @command.has_permission(kick_members=True)
+    @commands.has_permissions(kick_members=True)
     async def kick(ctx, member: discord.Member):
         try:
             await member.kick(reason=f"Kick par {ctx.author.name} - {client.user.name} Mod")

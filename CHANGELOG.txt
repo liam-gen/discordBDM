@@ -2,10 +2,14 @@ Change Log
 
 ==========
 
-0.0.2 (24/03/2021)
+0.0.3 (26/03/2021)
 
 ==========
 
 - First Release 
 - Added help panel
 - Added mod commands, color systeme, udapte help
+- Added musics commands 
+- Added aliases commands
+- Added join event 
+- Added Module

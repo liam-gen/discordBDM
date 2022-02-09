@@ -9,47 +9,48 @@ import youtube_dl
 
 from webserver import keep_alive
 
-def bot(prefix, description, token, status, color, chjoinremove):
-    botprefix = prefix
-    botdescription = description
-    bottoken = token
-    botstatus = status
-    botcolor = color
-    botjoinch = chjoinremove
+class Bot(prefix, description, token, status, color, chjoinremove):
+    def __init__(self, *args, **kwargs):
+        self.botprefix = args[0]
+        self.botdescription = args[1]
+        self.bottoken = args[2]
+        self.botstatus = args[3]
+        self.botcolor = args[4]
+        self.botjoinch = args[5]
 
-    default_intents = discord.Intents.default()
-    default_intents.members = True
+        self.default_intents = discord.Intents.default()
+        self.default_intents.members = True
 
-    client = commands.Bot(command_prefix=botprefix, description=botdescription, intents=default_intents)
+        client = commands.Bot(command_prefix=self.botprefix, description=self.botdescription, intents=self.default_intents)
 
-    musics = {}
+        self.musics = {}
 
-    ytdl = youtube_dl.YoutubeDL()
+        self.ytdl = youtube_dl.YoutubeDL()
 
-    class Video:
-        def __init__(self, link):
-            video = ytdl.extract_info(link, download=False)
-            video_format = video["formats"] [0]
-            self.url = video["webpage_url"]
-            self.stream_url = video_format["url"]
+        class Video:
+            def __init__(self, link):
+                self.video = ytdl.extract_info(link, download=False)
+                self.video_format = video["formats"] [0]
+                self.url = video["webpage_url"]
+                self.stream_url = video_format["url"]
 
 
     
     @client.event
-    async def on_ready():
+    async def on_ready(self):
         print(
             f"Le bot {client.user.name} a été lancé ! \nStatistiques \nVersion : 0.0.2\nServeurs : {len(client.guilds)}\n\n----------\n\nChargement ...\nStatus : {botstatus}\nPréfix : {botprefix}\nDescription : {botdescription}\n\n----------\n\nToutes les commandes sont lancés !\nLancement du cog 1 ..\nCog 1 chargé avec succès !\nChargement des commandes musiques ...\n\n----------\n\nCommandes de musiques opérationelles !"
         )
         await client.change_presence(activity=discord.Game(name=botstatus))
 
     @client.command()
-    async def ping(ctx):
+    async def ping(self, ctx):
         latence = client.latency * 1000
         await ctx.send(f"Pong , je t'ai répondu en {round(latence)}ms !")
 
     @client.command()
     @commands.has_permissions(kick_members=True)
-    async def kick(ctx, member: discord.Member, reason=None):
+    async def kick(self, ctx, member: discord.Member, reason=None):
         try:
             await member.kick(reason=f"Kick par {ctx.author.name} - {client.user.name} Mod - Raison :" + reason)
             embed = discord.Embed(title="Une nouvelle expulsion !", description=f"Oust **{member.name}** ! Il a été expluser par **{ctx.author.name}**!", colour=botcolor)
@@ -59,7 +60,7 @@ def bot(prefix, description, token, status, color, chjoinremove):
 
     @client.remove_command("help")
     @client.command()
-    async def help(ctx):
+    async def help(self, ctx):
         embed1 = discord.Embed(title="Page d'aide 0/4",
                               description="Sommaire :\n\nPage 1 : Bot\nPage 2 : Modération\nPage 3 : Informations\nPage 4 : Musique",
                               colour=botcolor)
@@ -75,24 +76,24 @@ def bot(prefix, description, token, status, color, chjoinremove):
         await paginator.run(embeds)
 
     @client.command(aliases=['BMD', 'bmd'])
-    async def discordBMD(ctx):
+    async def discordBMD(self, ctx):
         embed = discord.Embed(title="DiscordBMD", description="Github : [Clique ici](https://github.com/liam-gen/discordBDM)", colour=botcolor)
         embed.set_footer(text="Pour télécharger la package, rend toi sur le github")
         await ctx.send(embed=embed)
 
     @client.event
-    async def on_member_join(member):
+    async def on_member_join(self, member):
         channel = member.guild.get_channel(id=botjoinch)
         await channel.send(f"Bienvenue a **{member.display_name}** sur {member.guild.name} !")
 
     @client.event
-    async def on_member_remove(member):
+    async def on_member_remove(self.member):
         channel = member.guild.get_channel(botjoinch)
         await channel.send(f"Au revoir a **{member.display_name}** :sob: !")
 
 
     @client.command(aliases=["si"])
-    async def serveurinfo(ctx):
+    async def serveurinfo(self, ctx):
         server = ctx.guild
         id = server.id
         nbtext = len(server.text_channels)
@@ -103,14 +104,14 @@ def bot(prefix, description, token, status, color, chjoinremove):
         await ctx.send(embed=embed)
 
     @client.command()
-    async def skip(ctx):
+    async def skip(self, ctx):
         client = ctx.guild.voice_client
         client.stop()
         message = await ctx.send("Je passe à la musique suivante ! ")
         await message.add_reaction("⏭️")
 
     @client.command()
-    async def pause(ctx):
+    async def pause(self, ctx):
         client = ctx.guild.voice_client
         if not client.is_paused():
             client.pause()
@@ -118,7 +119,7 @@ def bot(prefix, description, token, status, color, chjoinremove):
             await message.add_reaction("⏸")
 
     @client.command()
-    async def stop(ctx):
+    async def stop(self, ctx):
         client = ctx.guild.voice_client
 
         await client.disconnect()
@@ -129,7 +130,7 @@ def bot(prefix, description, token, status, color, chjoinremove):
 
 
     @client.command()
-    async def resume(ctx):
+    async def resume(self, ctx):
         client = ctx.guild.voice_client
 
         if client.is_paused:
@@ -152,7 +153,7 @@ def bot(prefix, description, token, status, color, chjoinremove):
            
         client.play(source, after=next)
     @client.command()
-    async def play(ctx, url):
+    async def play(self, ctx, url):
         print(f"{ctx.author.name} a lancé une musique sur {ctx.guild} !")
         client = ctx.guild.voice_client
 
@@ -173,7 +174,7 @@ def bot(prefix, description, token, status, color, chjoinremove):
             await message.add_reaction("▶")
 
     @client.command()
-    async def join(ctx):
+    async def join(self, ctx):
         channel = ctx.author.voice.channel
         await channel.connect()
 

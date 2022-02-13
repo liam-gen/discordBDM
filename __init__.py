@@ -12,3 +12,5 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 __name__ = "DiscordBDM"
 __version__ = "1.0.0"
 __description__ = "discord package for BOTS"
+__license__ = "MIT"
+__copyrights__ = "2022 liam-gen"
